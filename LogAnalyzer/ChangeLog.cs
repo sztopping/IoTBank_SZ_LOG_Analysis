@@ -17,11 +17,23 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.4";
+    public const string CurrentVersion = "V0.1.5";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.5",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "修复：导入日志后程序崩溃退出的问题——根因是 32 位进程（net48 默认 Prefer32Bit）解析大日志内存受限，且 WebView2Loader.dll 位数与进程位数不匹配导致 BadImageFormatException。",
+                "强制 64 位编译（PlatformTarget=x64 + Prefer32Bit=false），消除 32 位内存限制。",
+                "发布脚本自动修正 WebView2Loader.dll 为 x64 版本（NuGet 默认复制 x86）。",
+                "新增全局异常捕获 + error.log 日志 + 导入 try-catch，异常不再导致进程直接退出，并可定位问题。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.4",

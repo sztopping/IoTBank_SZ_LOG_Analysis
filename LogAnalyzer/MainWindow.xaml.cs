@@ -90,36 +90,54 @@ public partial class MainWindow : Window
 
     private async void Import(IEnumerable<string> paths)
     {
-        var result = await _importService.ImportAsync(paths);
-        var profiles = result.Devices;
-
-        if (profiles.Count == 0)
+        try
         {
-            MessageBox.Show("未识别到可解析的日志（或机型暂未支持）。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
+            var result = await _importService.ImportAsync(paths);
+            var profiles = result.Devices;
+
+            if (profiles.Count == 0)
+            {
+                MessageBox.Show("未识别到可解析的日志（或机型暂未支持）。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            _devices = profiles;
+            DeviceList.ItemsSource = _devices;
+            DeviceList.SelectAll();
+            ChkSelectAll.IsChecked = true;
+            TxtDeviceCount.Text = $"已导入 {_devices.Count} 台设备";
+
+            // 解析提示（如「未联网，仅出本地解析报告」）
+            if (result.Messages.Count > 0)
+            {
+                MessageBox.Show(string.Join("\n\n", result.Messages), "解析提示",
+                    MessageBoxButton.OK,
+                    result.AiNeededButOffline ? MessageBoxImage.Warning : MessageBoxImage.Information);
+            }
+
+            // 弹出需求输入对话框，上位机根据需求内容自行判断分析方法
+            var reqDlg = new RequirementDialog { Owner = this };
+            if (reqDlg.ShowDialog() == true)
+            {
+                _requirement = reqDlg.Requirement;
+                GenerateReport();
+            }
         }
-
-        _devices = profiles;
-        DeviceList.ItemsSource = _devices;
-        DeviceList.SelectAll();
-        ChkSelectAll.IsChecked = true;
-        TxtDeviceCount.Text = $"已导入 {_devices.Count} 台设备";
-
-        // 解析提示（如「未联网，仅出本地解析报告」）
-        if (result.Messages.Count > 0)
+        catch (Exception ex)
         {
-            MessageBox.Show(string.Join("\n\n", result.Messages), "解析提示",
-                MessageBoxButton.OK,
-                result.AiNeededButOffline ? MessageBoxImage.Warning : MessageBoxImage.Information);
+            LogException(ex);
+            MessageBox.Show("导入日志时发生错误：" + ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
 
-        // 弹出需求输入对话框，上位机根据需求内容自行判断分析方法
-        var reqDlg = new RequirementDialog { Owner = this };
-        if (reqDlg.ShowDialog() == true)
+    private static void LogException(Exception ex)
+    {
+        try
         {
-            _requirement = reqDlg.Requirement;
-            GenerateReport();
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");
+            File.AppendAllText(path, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Import\n{ex}\n\n");
         }
+        catch { }
     }
 
     private void ChkSelectAll_Click(object sender, RoutedEventArgs e)

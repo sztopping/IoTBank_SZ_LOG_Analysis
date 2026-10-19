@@ -19,6 +19,13 @@ Write-Host "正在发布 .NET Framework 4.8 ..."
 dotnet publish "LogAnalyzer\LogAnalyzer.csproj" -c Release -o publish
 if ($LASTEXITCODE -ne 0) { Write-Error "发布失败"; exit 1 }
 
+# 修正 WebView2Loader.dll 位数（NuGet 默认复制 x86，需替换为 x64 以匹配 x64 exe）
+$native = "publish\runtimes\win-x64\native\WebView2Loader.dll"
+if (Test-Path $native) {
+    Copy-Item $native "publish\WebView2Loader.dll" -Force
+    Write-Host "已修正 WebView2Loader.dll 为 x64 版本"
+}
+
 # 重命名 exe 带版本号
 $exe = "publish\LogAnalyzer.exe"
 if (Test-Path $exe) {
