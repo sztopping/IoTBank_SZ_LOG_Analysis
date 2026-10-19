@@ -26,12 +26,16 @@ if (Test-Path $native) {
     Write-Host "已修正 WebView2Loader.dll 为 x64 版本"
 }
 
-# 重命名 exe 带版本号
+# 重命名 exe 带版本号（config 文件必须同步重命名，否则 binding redirect 失效）
 $exe = "publish\LogAnalyzer.exe"
 if (Test-Path $exe) {
     $newName = "publish\LogAnalyzer_$version.exe"
     Move-Item $exe $newName -Force
-    Write-Host "已生成：$newName"
+    $cfg = "publish\LogAnalyzer.exe.config"
+    if (Test-Path $cfg) {
+        Copy-Item $cfg "publish\LogAnalyzer_$version.exe.config" -Force
+    }
+    Write-Host "已生成：$newName（含同名 .config）"
 }
 
 # 删除调试符号（可选）
