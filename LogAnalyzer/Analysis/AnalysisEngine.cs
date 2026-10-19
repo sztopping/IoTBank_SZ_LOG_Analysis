@@ -28,11 +28,19 @@ public class AnalysisEngine
     /// <summary>
     /// 对设备列表执行分析，返回报告数据（含所有适用章节）。
     /// </summary>
-    public ReportData Run(IReadOnlyList<DeviceProfile> devices)
+    public ReportData Run(IReadOnlyList<DeviceProfile> devices, string? requirement = null)
     {
         var report = new ReportData { Devices = devices.ToList() };
+
+        // 需求解析：根据用户输入的需求文本，自行判断调用哪些分析方法
+        var plannedKeys = RequirementPlanner.Plan(requirement);
+        report.Requirement = requirement;
+        report.RequirementSummary = RequirementPlanner.Summarize(requirement, plannedKeys);
+
         foreach (var method in _methods)
         {
+            // 指定了需求且当前方法不在计划内 → 跳过
+            if (plannedKeys != null && !plannedKeys.Contains(method.MethodKey)) continue;
             if (!method.CanApply(devices)) continue;
             report.Sections.AddRange(method.Analyze(devices));
         }

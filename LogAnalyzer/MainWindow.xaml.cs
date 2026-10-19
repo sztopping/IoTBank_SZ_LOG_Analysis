@@ -16,6 +16,7 @@ public partial class MainWindow : Window
 
     private List<DeviceProfile> _devices = new();
     private string? _lastReportHtml;
+    private string? _requirement; // 用户输入的分析需求
 
     public MainWindow()
     {
@@ -109,6 +110,14 @@ public partial class MainWindow : Window
                 MessageBoxButton.OK,
                 result.AiNeededButOffline ? MessageBoxImage.Warning : MessageBoxImage.Information);
         }
+
+        // 弹出需求输入对话框，上位机根据需求内容自行判断分析方法
+        var reqDlg = new RequirementDialog { Owner = this };
+        if (reqDlg.ShowDialog() == true)
+        {
+            _requirement = reqDlg.Requirement;
+            GenerateReport();
+        }
     }
 
     private void ChkSelectAll_Click(object sender, RoutedEventArgs e)
@@ -119,6 +128,18 @@ public partial class MainWindow : Window
 
     private void BtnAnalyze_Click(object sender, RoutedEventArgs e)
     {
+        // 已有需求则直接生成；否则再次弹出需求对话框
+        if (_requirement == null)
+        {
+            var reqDlg = new RequirementDialog { Owner = this };
+            if (reqDlg.ShowDialog() == true)
+                _requirement = reqDlg.Requirement;
+        }
+        GenerateReport();
+    }
+
+    private void GenerateReport()
+    {
         var selected = DeviceList.SelectedItems.Cast<DeviceProfile>().ToList();
         if (selected.Count == 0)
         {
@@ -126,7 +147,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var report = _engine.Run(selected);
+        var report = _engine.Run(selected, _requirement);
         _lastReportHtml = _reportGenerator.Generate(report);
 
         TxtPlaceholder.Visibility = Visibility.Collapsed;

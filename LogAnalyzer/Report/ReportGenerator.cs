@@ -55,6 +55,8 @@ public class ReportGenerator
         sb.AppendLine("  <section class=\"card\">");
         sb.AppendLine($"    <h2 class=\"lt\" data-zh=\"分析概览\" data-ja=\"分析概要\" data-en=\"Overview\">分析概览</h2>");
         sb.AppendLine($"    <p class=\"meta lt\" data-zh=\"设备数：{report.Devices.Count}　生成时间：{report.GeneratedAt}\" data-ja=\"デバイス数：{report.Devices.Count}　生成時刻：{report.GeneratedAt}\" data-en=\"Devices: {report.Devices.Count}  Generated: {report.GeneratedAt}\">设备数：{report.Devices.Count}　生成时间：{report.GeneratedAt}</p>");
+        if (!string.IsNullOrWhiteSpace(report.RequirementSummary))
+            sb.AppendLine($"    <p class=\"conclusion\">{EscapeHtml(report.RequirementSummary)}</p>");
         sb.AppendLine(BuildDeviceCards(report));
         sb.AppendLine("  </section>");
 

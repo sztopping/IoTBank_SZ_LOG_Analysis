@@ -76,5 +76,9 @@ public class ReportData
 {
     public List<DeviceProfile> Devices { get; set; } = new();
     public List<AnalysisSection> Sections { get; set; } = new();
+    /// <summary>用户输入的分析需求（可为空）</summary>
+    public string? Requirement { get; set; }
+    /// <summary>需求解析结果摘要（三语展示用）</summary>
+    public string? RequirementSummary { get; set; }
     public string GeneratedAt { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 }

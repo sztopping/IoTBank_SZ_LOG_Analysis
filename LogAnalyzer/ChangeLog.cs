@@ -17,11 +17,22 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.2";
+    public const string CurrentVersion = "V0.1.3";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.3",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "新增「需求驱动分析」：上传日志后弹出对话框，用户输入分析需求（如「分析温度趋势并对比设备信号强度」），上位机根据需求内容自行判断需要调用哪些分析方法，生成专业分析报告。",
+                "新增「需求解析器」：本地关键词匹配（趋势/变化→时间序列趋势；相关/关联→相关分析；对比/统计/分布→描述统计），需求为空或未命中时按数据形态全自动分析。",
+                "报告首页新增「需求解析摘要」，展示用户需求与匹配的分析方法。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.2",
