@@ -29,8 +29,10 @@ public partial class MainWindow : Window
     {
         try
         {
+            // WebView2 缓存放到系统临时目录，避免在程序目录生成 WebView2Data 文件夹
+            var userDataFolder = Path.Combine(Path.GetTempPath(), "LogAnalyzer_WebView2Data");
             var env = await Microsoft.Web.WebView2.Core.CoreWebView2Environment
-                .CreateAsync(userDataFolder: Path.Combine(AppContext.BaseDirectory, "WebView2Data"));
+                .CreateAsync(userDataFolder: userDataFolder);
             await WebView.EnsureCoreWebView2Async(env);
             WebView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
         }
@@ -186,19 +188,30 @@ public partial class MainWindow : Window
 
     private void MenuSop_Click(object sender, RoutedEventArgs e)
     {
-        var sopPath = Path.Combine(AppContext.BaseDirectory, "docs", "SOP_操作说明.html");
-        if (!File.Exists(sopPath))
-        {
-            MessageBox.Show("未找到操作说明文件（docs/SOP_操作说明.html）。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(sopPath) { UseShellExecute = true });
+            // SOP 已内嵌到 exe，从嵌入资源提取到临时文件后打开
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            var resName = asm.GetManifestResourceNames()
+                .FirstOrDefault(n => n.EndsWith("SOP_操作说明.html", StringComparison.OrdinalIgnoreCase));
+            if (resName == null)
+            {
+                MessageBox.Show("未找到操作说明文件。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var tmpPath = Path.Combine(Path.GetTempPath(), "LogAnalyzer_SOP_操作说明.html");
+            using (var stream = asm.GetManifestResourceStream(resName))
+            using (var fs = new FileStream(tmpPath, FileMode.Create, FileAccess.Write))
+            {
+                stream!.CopyTo(fs);
+            }
+
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tmpPath) { UseShellExecute = true });
         }
-        catch
+        catch (Exception ex)
         {
-            MessageBox.Show("无法打开操作说明文件。", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("无法打开操作说明：" + ex.Message, "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 

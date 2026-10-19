@@ -26,6 +26,10 @@ if (Test-Path $native) {
     Write-Host "已修正 WebView2Loader.dll 为 x64 版本"
 }
 
+# 删除多余子文件夹（runtimes 为冗余 native 依赖，docs 已内嵌到 exe）
+if (Test-Path "publish\runtimes") { Remove-Item "publish\runtimes" -Recurse -Force }
+if (Test-Path "publish\docs") { Remove-Item "publish\docs" -Recurse -Force }
+
 # 重命名 exe 带版本号（config 文件必须同步重命名，否则 binding redirect 失效）
 $exe = "publish\LogAnalyzer.exe"
 if (Test-Path $exe) {
@@ -42,5 +46,5 @@ if (Test-Path $exe) {
 Get-ChildItem "publish" -Filter "*.pdb" -Recurse | Remove-Item -Force
 
 Write-Host ""
-Write-Host "发布完成。拷贝 publish 目录（约 3~4MB）到任意 Win10+ 电脑即可运行，无需安装运行时。"
-Write-Host "说明：docs 文件夹含操作说明(SOP)与全代码文档；ai_config.json 为可选 AI 配置。"
+Write-Host "发布完成。publish 目录只含 exe + 依赖 dll + config + ai_config.json，无多余子文件夹。"
+Write-Host "拷贝到任意 Win10+ 电脑即可运行；ai_config.json 为可选 AI 配置。"

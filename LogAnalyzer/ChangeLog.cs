@@ -17,11 +17,22 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.6";
+    public const string CurrentVersion = "V0.1.7";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.7",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "精简发布目录：发布产物只保留 exe + 依赖 dll + config + ai_config.json，去除 runtimes/docs 等多余子文件夹。",
+                "操作说明(SOP)内嵌到 exe（菜单打开时提取到临时文件），不再随附 docs 文件夹。",
+                "WebView2 缓存目录改到系统临时目录，运行时不再在程序目录生成 WebView2Data 文件夹。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.6",
