@@ -17,11 +17,23 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.3";
+    public const string CurrentVersion = "V0.1.4";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.4",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "迁移到 .NET Framework 4.8：利用 Win10/11 系统自带运行时，发布体积从 69MB 缩减至约 3.4MB（exe 仅 1.2MB），拷贝到任意 Win10+ 电脑直接运行、无需安装 .NET 运行时。",
+                "语言版本保持 latest（保留全部 C# 9 语法），新增 System.Text.Json 依赖与 System.Net.Http/System.Windows.Forms 引用。",
+                "GBK 解码改用 .NET Framework 原生代码页（无需 CodePagesEncodingProvider）。",
+                "文件夹选择对话框改用 WinForms FolderBrowserDialog（.NET Framework 无 OpenFolderDialog）。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.3",

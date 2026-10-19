@@ -77,8 +77,7 @@ public class ModelDetector
         }
         catch (System.Text.DecoderFallbackException)
         {
-            // 回退 GBK
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            // 回退 GBK（.NET Framework 4.8 默认支持代码页，无需 RegisterProvider）
             return System.Text.Encoding.GetEncoding("GBK").GetString(bytes);
         }
     }

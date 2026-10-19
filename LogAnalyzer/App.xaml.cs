@@ -7,12 +7,11 @@ namespace LogAnalyzer;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        // 注册编码提供程序，支持 GBK 解码
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        // .NET Framework 4.8 默认支持 GBK 等代码页编码，无需 RegisterProvider
         // 加载 AI 解析配置（ai_config.json）
         AiConfig.Load();
         base.OnStartup(e);

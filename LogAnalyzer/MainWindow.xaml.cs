@@ -69,21 +69,23 @@ public partial class MainWindow : Window
 
     private void BtnOpenFolder_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new Microsoft.Win32.OpenFolderDialog { Title = "选择日志文件夹" };
-        if (dlg.ShowDialog() == true)
-            Import(new[] { dlg.FolderName });
+        using (var dlg = new System.Windows.Forms.FolderBrowserDialog { Description = "选择日志文件夹" })
+        {
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                Import(new[] { dlg.SelectedPath });
+        }
     }
 
-    private void Window_DragOver(object sender, DragEventArgs e)
+    private void Window_DragOver(object sender, System.Windows.DragEventArgs e)
     {
-        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Effects = e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop) ? System.Windows.DragDropEffects.Copy : System.Windows.DragDropEffects.None;
         e.Handled = true;
     }
 
-    private void Window_Drop(object sender, DragEventArgs e)
+    private void Window_Drop(object sender, System.Windows.DragEventArgs e)
     {
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            Import((string[])e.Data.GetData(DataFormats.FileDrop));
+        if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            Import((string[])e.Data.GetData(System.Windows.DataFormats.FileDrop));
     }
 
     private async void Import(IEnumerable<string> paths)
