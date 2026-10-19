@@ -17,11 +17,20 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.7";
+    public const string CurrentVersion = "V0.1.8";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.8",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "修复：打开程序快速弹出多个警告窗口的问题——设备列表 XAML 中 Run.Text 对只读属性（IdType/Metrics.Count/Fields.Count）默认做了 TwoWay 绑定，触发 XamlParseException 反复弹窗。改为显式 OneWay 绑定。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.7",

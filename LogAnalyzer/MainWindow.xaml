@@ -76,11 +76,11 @@
                                         <TextBlock Text="{Binding DeviceId}" Margin="8,0,0,0" FontFamily="Consolas" FontSize="13" Foreground="#111827"/>
                                     </StackPanel>
                                     <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#6B7280">
-                                        <Run Text="识别码类型："/><Run Text="{Binding IdType}"/>
+                                        <Run Text="识别码类型："/><Run Text="{Binding IdType, Mode=OneWay}"/>
                                     </TextBlock>
                                     <TextBlock FontSize="11" Foreground="#6B7280" Margin="0,2,0,0" TextWrapping="Wrap">
-                                        <Run Text="指标数："/><Run Text="{Binding Metrics.Count}"/>
-                                        <Run Text="　字段数："/><Run Text="{Binding Fields.Count}"/>
+                                        <Run Text="指标数："/><Run Text="{Binding Metrics.Count, Mode=OneWay}"/>
+                                        <Run Text="　字段数："/><Run Text="{Binding Fields.Count, Mode=OneWay}"/>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
