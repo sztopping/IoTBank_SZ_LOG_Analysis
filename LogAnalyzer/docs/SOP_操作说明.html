@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log 分析工具 操作说明 (SOP)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f5f6f8; color: #1f2937; line-height: 1.7; padding-bottom: 60px; }
+.topbar { background: #2563eb; color: #fff; padding: 28px 32px; }
+.topbar h1 { font-size: 24px; font-weight: 600; }
+.topbar p { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+.container { max-width: 960px; margin: 24px auto; padding: 0 20px; }
+.card { background: #fff; border-radius: 12px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.card h2 { font-size: 18px; margin-bottom: 14px; padding-left: 10px; border-left: 4px solid #2563eb; }
+.card h3 { font-size: 15px; margin: 18px 0 8px; color: #111827; }
+.card p, .card li { font-size: 14px; color: #374151; }
+.card ul, .card ol { padding-left: 24px; }
+.card li { margin: 6px 0; }
+.step { display: flex; gap: 12px; margin: 14px 0; }
+.step-num { background: #2563eb; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+.step-body { flex: 1; }
+.step-body b { color: #111827; }
+.note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13px; color: #92400e; }
+.tip { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13px; color: #1e40af; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; }
+th { background: #f9fafb; font-weight: 600; }
+.ver { background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.changelog-item { border-bottom: 1px dashed #e5e7eb; padding: 10px 0; }
+.changelog-item:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Log 分析工具 · 操作说明 (SOP)</h1>
+  <p>版本 V0.1.2 · 适用于各机型日志（B203 / B504 / B509ES / B705/B706 / 音频 B903）及未知机型（智能解析 / AI 增强）</p>
+</div>
+
+<div class="container">
+
+<div class="card">
+  <h2>一、工具简介</h2>
+  <p>本工具用于解析各机型（B203 / B504 / B509ES / B705/B706 / 音频 B903 等）测试上位机导出的日志文件，自动提取设备唯一识别码与固定信息，对返回参数进行科学统计分析与图表可视化，并生成可交互的 HTML 分析报告（支持中日英三语切换）。</p>
+  <h3>核心能力</h3>
+  <ul>
+    <li>导入单个/多个同类型日志文件，或整个文件夹（自动递归）。</li>
+    <li>以唯一识别码（IMEI / MAC / SN）为准，提取设备固定信息。</li>
+    <li>指定单个/多个设备号进行对比分析（多设备箱线图等）。</li>
+    <li>精准解析返回参数，自动匹配适用统计方法（描述统计 / 相关 / 趋势 / 箱线图对比等）。</li>
+    <li><b>智能解析</b>：对未预定义的新机型，读入日志后自动探测时间戳格式、识别「字段=数值+单位」模式、区分固定信息与时序指标、自动推断单位。</li>
+    <li>交互图表：拖动缩放、十字虚线指示、悬浮数据高亮、Y 轴纵向名称、图表上方标题。</li>
+    <li>中日英三语一键切换。</li>
+    <li><b>单文件便携</b>：发布版为自包含单文件 exe，拷贝到任意 Win10+ 电脑直接运行，无需安装 .NET 运行时。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>二、运行环境</h2>
+  <table>
+    <tr><th>项目</th><th>要求</th></tr>
+    <tr><td>操作系统</td><td>Windows 10 / 11（64 位）</td></tr>
+    <tr><td>运行时</td><td>无需安装（发布版已自包含 .NET 8 运行时）</td></tr>
+    <tr><td>浏览器内核</td><td>WebView2 Runtime（Win10/11 通常已内置；缺失时报告预览区会显示占位文本，导出 HTML 不受影响）</td></tr>
+    <tr><td>网络</td><td>核心功能（解析/统计/报告）均离线可用；启动时会检测联网并提示</td></tr>
+    <tr><td>依赖</td><td>无外部依赖，报告离线可用</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>三、操作步骤</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <b>导入日志</b>
+      <p>三种方式任选：</p>
+      <ul>
+        <li>直接把 .txt / .log 文件或文件夹<b>拖入窗口</b>；</li>
+        <li>点击菜单「文件 → 选择日志文件...」多选文件；</li>
+        <li>点击菜单「文件 → 选择日志文件夹...」选择文件夹（自动递归子目录）。</li>
+      </ul>
+      <p>导入后左侧显示设备列表（机型 + 识别码 + 指标/字段数）。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <b>选择要分析的设备</b>
+      <p>在左侧设备列表勾选一台或多台设备（默认全选）。勾选多台时将生成设备间对比分析。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <b>生成分析报告</b>
+      <p>点击底部「生成分析报告」按钮，右侧预览区即显示 HTML 报告。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <b>查看与交互</b>
+      <ul>
+        <li>顶部「中文 / 日本語 / English」按钮切换报告语言（图表标题、坐标轴、指标名、结论全部随语言切换）。</li>
+        <li>图表支持<b>滚轮/拖动缩放</b>（右下滑块或框内拖动）；</li>
+        <li>鼠标悬停显示<b>十字虚线</b>，悬浮弹窗高亮对应数据点；</li>
+        <li>坐标轴显示名称与单位，Y 轴名称纵向显示。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <b>导出报告</b>
+      <p>点击「导出 HTML 报告」按钮，选择保存路径，即可得到可分享的单文件离线报告。</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>四、支持机型与识别码</h2>
+  <table>
+    <tr><th>机型</th><th>日志格式特征</th><th>识别码</th><th>主要参数</th></tr>
+    <tr><td>B203</td><td><code>[时间][RX/TX/SYS]</code> AT 指令</td><td>IMEI</td><td>LTE/WiFi/BLE/ESP32 RSSI、MAC、ICCID、SW/HW</td></tr>
+    <tr><td>B504</td><td><code>&gt;&gt; [时间]</code> 调试数据</td><td>IMEI</td><td>温湿度、震动/看门狗计数、Fs.* 配置</td></tr>
+    <tr><td>B509ES</td><td><code>00&gt; [时间]&lt;inf&gt;</code> 固件日志</td><td>IMEI</td><td>电池电压、SW/SDK/OS、UniqueID、Gsensor</td></tr>
+    <tr><td>B705/B706</td><td><code>时间戳 [INFO]</code> 上位机日志</td><td>MAC（IMEI 字段存 hex）</td><td>BLE/WiFi RSSI、SW/HW、MAC</td></tr>
+    <tr><td>音频 B903</td><td><code>$Test Start</code> / 判定行</td><td>IMEI</td><td>THD、SNR、底噪、灵敏度</td></tr>
+  </table>
+  <div class="tip">识别码提取优先级：IMEI（含 Luhn 校验）→ MAC → SN。某些机型把 MAC 以 12 位十六进制写进「IMEI:」字段（如 B705），工具会自动识别为 MAC 类型。</div>
+</div>
+
+<div class="card">
+  <h2>五、解析优先级模式（本地优先 + AI 增强）</h2>
+  <p>工具的解析采用<b>本地优先、联网增强、离线降级</b>三级策略：</p>
+  <table>
+    <tr><th>优先级</th><th>条件</th><th>行为</th></tr>
+    <tr><td>① 本地解析</td><td>预定义机型（B203 等）或智能解析器可完整解析</td><td>直接本地解析，不联网</td></tr>
+    <tr><td>② 联网 AI 增强</td><td>本地解析不完整 + 电脑联网 + 已配置 AI 密钥</td><td>自动调用免费 AI 工具（DeepSeek/Kimi/智谱GLM 等）增强解析</td></tr>
+    <tr><td>③ 离线降级</td><td>本地解析不完整 + 电脑未联网</td><td>弹窗提示「仅输出本地解析报告」，不再尝试联网</td></tr>
+  </table>
+  <h3>如何启用 AI 增强解析（可选）</h3>
+  <p>编辑程序目录下的 <code>ai_config.json</code>，在对应提供商的 <code>apiKey</code> 填入密钥（DeepSeek / Kimi / 智谱GLM 均有免费额度，注册后获取）。可配置多个提供商，工具会依次尝试，首个成功即返回。</p>
+  <div class="note">未配置任何密钥时，工具完全离线运行，AI 增强自动跳过（不影响本地解析）。</div>
+</div>
+
+<div class="card">
+  <h2>六、统计方法说明</h2>
+  <p>工具采用<b>自适应统计引擎</b>：每个统计方法自带适用性判断，按日志实际数据形态自动决定调用哪些方法，避免「硬套方法得出无意义结论」。</p>
+  <table>
+    <tr><th>方法</th><th>触发条件</th><th>输出</th></tr>
+    <tr><td>描述性统计</td><td>任一指标有数据</td><td>均值/中位数/标准差/极值/变异系数表 + 时序折线图</td></tr>
+    <tr><td>相关分析</td><td>单设备 ≥2 个指标（各 ≥3 点）</td><td>Pearson 相关系数矩阵 + 强相关组合结论</td></tr>
+    <tr><td>时间序列趋势</td><td>指标 ≥10 点</td><td>线性回归斜率/R² + 趋势判定 + 趋势图</td></tr>
+    <tr><td>多设备箱线图</td><td>≥2 台设备有同名指标</td><td>boxplot 分布对比</td></tr>
+    <tr><td>KANO / SEM / 中介</td><td>数据含问卷/量表形态时</td><td>log 客观参数默认不触发</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>七、版本变更记录</h2>
+  <div class="changelog-item">
+    <span class="ver">V0.1.2</span> <b>2026-10-19</b>
+    <ul>
+      <li>新增解析优先级模式：本地优先，本地不完整时联网调用免费 AI（DeepSeek/Kimi/智谱GLM）增强；未联网弹窗提示仅出本地报告。</li>
+      <li>新增 ai_config.json 配置免费 AI 密钥（可选）。</li>
+    </ul>
+  </div>
+  <div class="changelog-item">
+    <span class="ver">V0.1.1</span> <b>2026-10-19</b>
+    <ul>
+      <li>新增通用智能解析器（未知机型读内容自行规划解析）、联网检测弹窗、自包含单文件发布、菜单栏。</li>
+    </ul>
+  </div>
+  <div class="changelog-item">
+    <span class="ver">V0.1.0</span> <b>2026-10-19</b>
+    <ul>
+      <li>初始版本：导入/机型识别/识别码提取/描述统计/相关/趋势/箱线图/三语 HTML 报告/菜单栏版本记录。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h2>八、常见问题</h2>
+  <h3>Q1：报告预览区空白？</h3>
+  <p>可能是本机未安装 WebView2 Runtime。可安装「Microsoft Edge WebView2 Runtime」后重启，或直接点击「导出 HTML 报告」用浏览器打开（导出不受影响）。</p>
+  <h3>Q2：某些设备未被识别？</h3>
+  <p>确认文件名/内容符合上表特征；若为未支持的新机型，需新增对应解析器插件。</p>
+  <h3>Q3：报告体积较大？</h3>
+  <p>因内嵌 ECharts 图表引擎（约 1MB）+ 完整数据，属正常现象，换取完全离线可用。</p>
+</div>
+
+</div>
+</body>
+</html>

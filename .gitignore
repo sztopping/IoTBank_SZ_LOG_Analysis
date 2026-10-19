@@ -1,0 +1,24 @@
+# 构建产物
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# 发布产物（自包含 exe，二进制不入库）
+publish/
+
+# 临时验证项目
+LogTest/
+
+# 生成的示例报告（生成产物，不入库）
+sample_report.html
+
+# WorkBuddy 项目数据
+.workbuddy/
+
+# 日志数据（大文件）
+各机型log文件/
+
+# WebView2 运行时缓存
+WebView2Data/
