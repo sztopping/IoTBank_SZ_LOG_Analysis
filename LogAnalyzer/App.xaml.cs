@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using LogAnalyzer.Services;
 
@@ -10,8 +11,19 @@ namespace LogAnalyzer;
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    private static Mutex? _singleInstanceMutex;
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        // 单实例限制：防止多开导致多个相同窗口
+        _singleInstanceMutex = new Mutex(true, "LogAnalyzer_SingleInstance_Mutex", out bool createdNew);
+        if (!createdNew)
+        {
+            MessageBox.Show("程序已在运行中，请勿重复打开。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            Shutdown();
+            return;
+        }
+
         // 全局异常捕获：防止未处理异常导致进程直接退出，并记录到 error.log
         DispatcherUnhandledException += (s, args) =>
         {
@@ -24,7 +36,7 @@ public partial class App : System.Windows.Application
         {
             LogException("AppDomain.UnhandledException", args.ExceptionObject as Exception);
         };
-        System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, args) =>
+        TaskScheduler.UnobservedTaskException += (s, args) =>
         {
             LogException("UnobservedTaskException", args.Exception);
             args.SetObserved();

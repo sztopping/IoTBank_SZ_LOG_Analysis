@@ -25,21 +25,6 @@ public partial class MainWindow : Window
         _ = InitWebViewAsync();
     }
 
-    /// <summary>
-    /// 窗口加载后异步检测联网。当前核心功能（解析/统计/报告）均为本地实现、离线可用；
-    /// 此检测为「需联网功能」的前置提示预留。若离线，弹窗告知。
-    /// </summary>
-    private async void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        var online = await NetworkHelper.IsOnlineAsync();
-        if (!online)
-        {
-            MessageBox.Show(
-                "当前电脑未联网。\n\n本工具的日志解析、统计分析与报告生成均为本地实现，离线即可使用。\n若后续启用需要联网的功能（如 AI 联网智能解析），会先提示您连接网络。",
-                "联网提示", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-    }
-
     private async Task InitWebViewAsync()
     {
         try

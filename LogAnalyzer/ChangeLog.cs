@@ -17,11 +17,21 @@ public class ChangeEntry
 public static class ChangeLog
 {
     /// <summary>当前版本号（每次变更必须递增）</summary>
-    public const string CurrentVersion = "V0.1.5";
+    public const string CurrentVersion = "V0.1.6";
 
     /// <summary>变更历史（新的在前）</summary>
     public static readonly List<ChangeEntry> History = new()
     {
+        new ChangeEntry
+        {
+            Version = "V0.1.6",
+            Date = "2026-10-19",
+            Items = new List<string>
+            {
+                "新增单实例限制：防止重复打开导致多个相同窗口，二次启动提示「程序已在运行中」。",
+                "移除启动时的联网提示弹窗（改为仅在导入需要联网功能时提示，避免启动打扰）。",
+            }
+        },
         new ChangeEntry
         {
             Version = "V0.1.5",
@@ -32,6 +42,7 @@ public static class ChangeLog
                 "强制 64 位编译（PlatformTarget=x64 + Prefer32Bit=false），消除 32 位内存限制。",
                 "发布脚本自动修正 WebView2Loader.dll 为 x64 版本（NuGet 默认复制 x86）。",
                 "新增全局异常捕获 + error.log 日志 + 导入 try-catch，异常不再导致进程直接退出，并可定位问题。",
+                "补全 binding redirect（App.config）：修复 System.Runtime.CompilerServices.Unsafe 版本不匹配导致的 FileLoadException，并同步重命名 .config 文件。",
             }
         },
         new ChangeEntry

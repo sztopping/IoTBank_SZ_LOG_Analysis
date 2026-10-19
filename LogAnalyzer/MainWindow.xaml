@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="Log 分析工具" Height="800" Width="1280"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver"
-        Loaded="Window_Loaded"
         Background="#F5F6F8" FontFamily="Microsoft YaHei UI, Segoe UI">
     <DockPanel>
         <!-- 菜单栏 -->
